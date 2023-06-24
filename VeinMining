@@ -1,0 +1,42 @@
+package example.fiacra.examplemod.events;
+
+import net.minecraftforge.event.world.BlockEvent.BreakEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+
+public class VeinMining {
+	
+	@SubscribeEvent
+	public void veinMine(BreakEvent event) {
+		
+		Level level = event.getPlayer().level;
+		BlockPos blockpos = event.getPos();
+		int x = blockpos.getX();
+		int y = blockpos.getY();
+		int z = blockpos.getZ();
+		int size = 4;
+		
+		for(int i=x-size; i <x+size+1; i++) {
+			for(int j=y-size; j <y+size+1; j++) {
+				for(int k=z-size; k <z+size+1; k++) {
+						
+					BlockPos pos = new BlockPos(i, j, k);
+					if(!level.getBlockState(pos).isAir()) {
+						if(level.getBlockState(pos).equals(level.getBlockState(blockpos))) {
+							if(x != i || y != j || z != k) {
+								if(event.getPlayer().getItemInHand(InteractionHand.MAIN_HAND)
+										.getDestroySpeed(level.getBlockState(blockpos)) > 1) {
+									level.destroyBlock(pos, true, null);
+								}
+							}
+						}
+					}
+				}
+			}
+		}  
+	}
+}
